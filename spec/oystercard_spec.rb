@@ -21,11 +21,43 @@ describe Oystercard do
 end
 
 describe Oystercard do
-    it { is_expected.to respond_to(:deduct).with(1).argument }
+    # it { is_expected.to respond_to(:deduct).with(1).argument }
+    #
+    # it 'deducts an amount from the balance' do
+    #   subject.top_up(20)
+    #   expect{ subject.deduct 3}.to change{ subject.balance }.by -3
+    # end
 
-    it 'deducts an amount from the balance' do
-      subject.top_up(20)
-      expect{ subject.deduct 3}.to change{ subject.balance }.by -3
+describe 'in_journey?' do
+      it { is_expected.to respond_to(:in_journey?) }
     end
+
+describe 'touch_in' do
+  it 'can return touch_in' do
+    subject.top_up(5)
+    subject.touch_in
+    expect(subject).to be_in_journey
+    # expect(subject.in_journey?).to eq(true)
+  end
+
+describe 'touch_out' do
+  it 'can return touch_out' do
+    subject.touch_out
+    expect(subject).to_not be_in_journey
+    # expect(subject.in_journey?).to eq(false)
+  end
+
+  it 'raises an error if your balance is below the minimum' do
+    minimum_balance = Oystercard::MINIMUM_BALANCE
+    expect{ subject.touch_in}.to raise_error "Balance is below the minimum"
+  end
+
+  it 'reduces balance on touch_out' do
+    expect{ subject.touch_out}.to change{subject.balance}.by -Oystercard::MINIMUM_BALANCE
+  end
+
+end
+
+end
 
 end
