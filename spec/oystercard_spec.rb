@@ -35,7 +35,7 @@ describe 'in_journey?' do
 describe 'touch_in' do
   it 'can return touch_in' do
     subject.top_up(5)
-    subject.touch_in
+    subject.touch_in("Waterloo")
     expect(subject).to be_in_journey
     # expect(subject.in_journey?).to eq(true)
   end
@@ -49,12 +49,29 @@ describe 'touch_out' do
 
   it 'raises an error if your balance is below the minimum' do
     minimum_balance = Oystercard::MINIMUM_BALANCE
-    expect{ subject.touch_in}.to raise_error "Balance is below the minimum"
+    expect{ subject.touch_in("Waterloo")}.to raise_error "Balance is below the minimum"
   end
 
   it 'reduces balance on touch_out' do
     expect{ subject.touch_out}.to change{subject.balance}.by -Oystercard::MINIMUM_BALANCE
   end
+
+  it 'can report entry_station name' do
+    #enough balance to touch in
+    #add an entry station to touch in
+    #call entry station after touch in
+    subject.top_up(6)
+    subject.touch_in("Moorgate")
+    expect(subject.entry_station).to eq("Moorgate")
+  end
+
+  it 'reports nil' do
+    subject.top_up(6)
+    subject.touch_in("Moorgate")
+    subject.touch_out
+    expect(subject.entry_station).to eq nil
+  end
+
 
 end
 
