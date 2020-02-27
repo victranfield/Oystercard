@@ -42,7 +42,7 @@ describe 'touch_in' do
 
 describe 'touch_out' do
   it 'can return touch_out' do
-    subject.touch_out
+    subject.touch_out("Old Street")
     expect(subject).to_not be_in_journey
     # expect(subject.in_journey?).to eq(false)
   end
@@ -53,7 +53,7 @@ describe 'touch_out' do
   end
 
   it 'reduces balance on touch_out' do
-    expect{ subject.touch_out}.to change{subject.balance}.by -Oystercard::MINIMUM_BALANCE
+    expect{ subject.touch_out("Old Street")}.to change{subject.balance}.by -Oystercard::MINIMUM_BALANCE
   end
 
   it 'can report entry_station name' do
@@ -65,13 +65,26 @@ describe 'touch_out' do
     expect(subject.entry_station).to eq("Moorgate")
   end
 
+  it 'can report exit_station name' do
+    subject.top_up(6)
+    subject.touch_in("Moorgate")
+    subject.touch_out("Old Street")
+    expect(subject.exit_station). to eq("Old Street")
+  end
+
   it 'reports nil' do
     subject.top_up(6)
     subject.touch_in("Moorgate")
-    subject.touch_out
+    subject.touch_out("Old Street")
     expect(subject.entry_station).to eq nil
   end
 
+  it 'stores journey history' do
+    subject.top_up(6)
+    subject.touch_in("Moorgate")
+    subject.touch_out("Old Street")
+    expect(subject.journey_record).to eq [{enter: "Moorgate", exit: "Old Street"}]
+  end
 
 end
 
